@@ -5,11 +5,6 @@ from networkui.extensions import db, migrate
 from networkui import ipaddress, networktemplates
 
 
-# this flag is to prevent multiple users from running script simultaniously
-# TODO: Ask help for a better implementaion of this.
-is_a_script_running = False
-
-
 def create_app(config_object=DevelopmentConfig):
     """Create application factory, as explained here: https://flask.palletsprojects.com/en/2.2.x/patterns/appfactories/
 
