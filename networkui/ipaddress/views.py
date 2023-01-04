@@ -15,3 +15,4 @@ blueprint = Blueprint(
 @blueprint.route("/add", methods=["GET", "POST"])
 def add():
     """Add new ip address"""
+    return render_template("ipaddress/add_ip_address.html")

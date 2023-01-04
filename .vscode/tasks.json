@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "flask app",
+            "type": "shell",
+            "command": "d:/dev/venvs/flask_tut_venv/Scripts/python.exe c:/Users/daisy/Documents/GitHub/QA-Network-UI-App/app.py",
+        },
+        {
+            "label": "flask app mac",
+            "type": "shell",
+            "command": "/Users/akberjagannath/Documents/Dev/venvs/flask_venv/bin/python /Users/akberjagannath/Documents/GitHub/QA-Network-UI-App/app.py",
+        }
+    ]
+}

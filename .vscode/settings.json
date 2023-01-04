@@ -1,0 +1,20 @@
+{
+    "python.analysis.typeCheckingMode": "basic",
+    "python.formatting.provider": "black",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass"
+            ]
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "files.associations": {
+        "*.html": "jinja-html"
+    },
+    "python.linting.enabled": false,
+    "html.format.wrapLineLength": 0
+}
