@@ -24,3 +24,8 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     """Production Config"""
+
+
+# this flag is to prevent multiple users from running script simultaniously
+# TODO: Ask help for a better implementaion of this.
+is_a_script_running = False

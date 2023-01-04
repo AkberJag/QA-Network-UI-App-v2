@@ -2,7 +2,12 @@
 from flask import Flask
 from networkui.config import DevelopmentConfig
 from networkui.extensions import db, migrate
-from networkui import ipaddress
+from networkui import ipaddress, networktemplates
+
+
+# this flag is to prevent multiple users from running script simultaniously
+# TODO: Ask help for a better implementaion of this.
+is_a_script_running = False
 
 
 def create_app(config_object=DevelopmentConfig):
@@ -28,3 +33,4 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(ipaddress.views.blueprint)
+    app.register_blueprint(networktemplates.views.blueprint)
