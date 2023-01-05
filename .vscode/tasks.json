@@ -9,7 +9,7 @@
         {
             "label": "flask app mac",
             "type": "shell",
-            "command": "/Users/akberjagannath/Documents/Dev/venvs/flask_venv/bin/python /Users/akberjagannath/Documents/GitHub/QA-Network-UI-App/app.py",
+            "command": "/Users/akberjagannath/Documents/Dev/venvs/flask_venv/bin/python /Users/akberjagannath/Documents/GitHub/QA-Network-UI-App-v2/app.py",
         }
     ]
 }
