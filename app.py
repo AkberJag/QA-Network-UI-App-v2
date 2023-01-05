@@ -1,4 +1,4 @@
-from networkui import create_app
+from networkuiapp import create_app
 
 app = create_app()
 

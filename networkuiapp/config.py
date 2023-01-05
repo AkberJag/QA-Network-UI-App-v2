@@ -9,15 +9,16 @@ class Config:
     applicable to all environments.
     """
 
-    SECRET_KEY = os.environ.get("CONDUIT_SECRET", "secret-key")
-    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    # SECRET_KEY = os.environ.get("CONDUIT_SECRET", "secret-key")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = "adsadsads"
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 class DevelopmentConfig(Config):
     """Development configuration."""
 
-    DB_NAME = "dev.db"
+    DB_NAME = "dev.sqlite"
     DB_PATH = os.path.join(Config.BASE_DIR, DB_NAME)
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
 
