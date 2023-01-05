@@ -4,7 +4,7 @@
         {
             "label": "flask app",
             "type": "shell",
-            "command": "d:/dev/venvs/flask_tut_venv/Scripts/python.exe c:/Users/daisy/Documents/GitHub/QA-Network-UI-App/app.py",
+            "command": "d:/dev/venvs/flask_tut_venv/Scripts/python.exe c:/Users/daisy/Documents/GitHub/QA-Network-UI-App-v2/app.py",
         },
         {
             "label": "flask app mac",
