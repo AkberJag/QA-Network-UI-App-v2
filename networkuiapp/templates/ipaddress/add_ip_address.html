@@ -4,6 +4,37 @@
 
 {% block content %}
 <div>
-    <h3>Add a new IP address</h3>
+    <h3 class="mb-4">Add a new IP address</h3>
+    <form method="POST" novalidate class="needs-validation">
+        {{form.hidden_tag()}}
+
+        {# PC Name field #}
+        <div class="mb-3">
+            <label for="pc_name" class="form-label">{{form.pc_name.label}}</label>
+            {{form.pc_name(class="form-control", required="required", id="pc_name", placeholder="QA PC 1")}}
+            <div class="valid-feedback">Looks good!</div>
+            <div class="invalid-feedback">Please enter a name for your device.</div>
+        </div>
+
+        {# IP address field #}
+        <div class="mb-3">
+            <label for="ip_address" class="form-label">{{form.ip_address.label}}</label>
+            {{form.ip_address(class="form-control", required="required", id="ip_address", placeholder="192.168.10.10")}}
+            <div class="valid-feedback">Looks good!</div>
+            <div class="invalid-feedback">Stop QA'ing and enter an IP adderss.</div>
+        </div>
+
+        {# Network template drop down #}
+        <div class="mb-3">
+            <label for="templateDrop" class="form-label">{{form.network_template.label}}</label>
+            {{form.network_template(class="dropdown-toggle form-select", id="templateDrop")}}
+        </div>
+
+        {# submit button #}
+        <div class="col-12">
+            {{form.submit(class="btn btn-outline-primary")}}
+        </div>
+    </form>
 </div>
+
 {% endblock content %}

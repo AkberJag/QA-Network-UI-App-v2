@@ -9,15 +9,13 @@
                     <a class="nav-link {% if active_page=='home' %} class= active {% endif %}" aria-current="page" href="">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if active_page=='add_ip_address' %} class= active {% endif %}" aria-current="page" href="">Add IP Address</a>
+                    <a class="nav-link {% if active_page=='add_ip_address' %} class= active {% endif %}" aria-current="page" href="{{url_for('ipaddress.add')}}">Add IP Address</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if active_page=='add_network' %} class= active {% endif %}" aria-current="page" href="">Add network
-                        template</a>
+                    <a class="nav-link {% if active_page=='add_network_template' %} class= active {% endif %}" aria-current="page" href="{{url_for('networktemplates.add')}}">Add network template</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if active_page=='list_network' %} class= active {% endif %}" aria-current="page" href="">List all network
-                        templates</a>
+                    <a class="nav-link {% if active_page=='list_network' %} class= active {% endif %}" aria-current="page" href="">List all network templates</a>
                 </li>
             </ul>
         </div>

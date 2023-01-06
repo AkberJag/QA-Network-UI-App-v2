@@ -1,10 +1,10 @@
-""" IP Address Model
+""" IP Address Model 
 
 A new thing learned: To make a migration, we need to make sure our model is imported by the app.
 In most cases views.py should do that. if not then migrate wont detect models.
 
 """
-from networkuiapp.database import PkModel, Column, db
+from networkuiapp.database import PkModel, Column, db, ReferenceCol
 
 
 class IPAddress(PkModel):
@@ -12,12 +12,10 @@ class IPAddress(PkModel):
 
     __tablename__ = "ipaddress"
 
-    id = Column(db.Integer, primary_key=True)
-
     pc_name = Column(db.Text, unique=True)
     ip_address = Column(db.Text, unique=True)
 
-    network_template = Column(db.Integer, db.ForeignKey("networkhandicaps.id"))
+    network_template = ReferenceCol("networktemplates")
 
     def __init__(self, **kwargs):
         """Create instance."""

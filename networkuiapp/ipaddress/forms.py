@@ -8,10 +8,10 @@ from wtforms.validators import InputRequired, Optional
 class AddForm(FlaskForm):
     """add IP Address form"""
 
-    pc_name = StringField("Enter PC name: ", validators=[InputRequired()])
+    pc_name = StringField("Enter PC name", validators=[InputRequired()])
 
-    ip_address = StringField("Enter IP Address: ")
-    network_handicap = SelectField("Selecet Network Profile:")
+    ip_address = StringField("Enter IP Address")
+    network_template = SelectField("Selecet network template")
 
     submit = SubmitField("Add IP Address")
 
@@ -19,5 +19,5 @@ class AddForm(FlaskForm):
 class DeleteForm(FlaskForm):
     """delete IP Address form"""
 
-    id = IntegerField("Enter id of the IP address: ")
+    id = IntegerField("Enter id of the IP address")
     submit = SubmitField("Delete IP Address")
