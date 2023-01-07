@@ -3,7 +3,7 @@
 from flask import Flask
 from networkuiapp.config import DevelopmentConfig
 from networkuiapp.extensions import db, migrate
-from networkuiapp import ipaddress, networkprofile
+from networkuiapp import ipaddress, networktemplate
 
 
 def create_app(config_object=DevelopmentConfig):
@@ -29,4 +29,4 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(ipaddress.views.blueprint)
-    app.register_blueprint(networkprofile.views.blueprint)
+    app.register_blueprint(networktemplate.views.blueprint)
