@@ -16,6 +16,7 @@ from networkuiapp.utils import make_cidr_range
 from networkuiapp.ipaddress.forms import AddForm
 from networkuiapp.ipaddress.models import IPAddress
 from networkuiapp.networktemplate.models import NetworkTemplate
+from networkuiapp.firewall_helpers.firewall_utils import add_ip_to_firewall
 
 blueprint = Blueprint("ipaddress", __name__, url_prefix="/ipaddress")
 
@@ -38,17 +39,17 @@ def add():
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
         flash("a script is running please wait before adding a new PC", "danger")
-        return redirect(url_for("networktemplates.add"))
+        return redirect(url_for("networktemplates.list"))
 
     if form.validate_on_submit():
+        add_ip_to_firewall(form.ip_address.data, form.network_template.data)
         IPAddress.create(
             ip_address=form.ip_address.data,
             pc_name=form.pc_name.data,
             network_template=form.network_template.data,
         )
         flash(Markup(f"IP address added successfully"), "success")
-        # todo: redirect to home
-        return redirect(url_for("ipaddress.add"))
+        return redirect(url_for("public.index"))
     else:
         flash_errors(form)
 
@@ -70,7 +71,7 @@ def delete(id):
         IPAddress.delete(ip_address_to_delete)
         flash(f"IP Address deleted", "success")
         # TODO: Add a script call to remove this IP address from the restriction
-    return redirect(url_for("ipaddress.add"))
+    return redirect(url_for("networktemplates.list"))
 
 
 @blueprint.route("/update/<int:id>", methods=["GET", "POST"])
@@ -96,7 +97,7 @@ def update(id):
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
         flash("a script is running please wait before adding a new PC", "danger")
-        return redirect(url_for("networktemplates.add"))
+        return redirect(url_for("networktemplates.list"))
 
     if form.validate_on_submit():
         ip_address_to_update.update(
@@ -106,7 +107,7 @@ def update(id):
         )
         flash(Markup(f"IP address updated successfully"), "success")
         # todo: redirect to home
-        return redirect(url_for("ipaddress.add"))
+        return redirect(url_for("networktemplates.list"))
     else:
         flash_errors(form)
 
