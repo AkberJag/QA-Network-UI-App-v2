@@ -70,6 +70,22 @@ def check_ip_belongs_subnet(ip: str, nw: str) -> bool:
     return False
 
 
+def make_cidr_range(template_and_subnets) -> dict:
+    """Creates a dict where Key: is Template Name and Value is CIDR limit text
+
+    Args:
+        template_and_subnets: Query return with template name and subnet limit
+
+    Returns:
+        dict: key: Template name, Value: CIDR limit
+    """
+    return {
+        handicap_name: ip_mask_calculations(cidr_notation)["limit"]
+        for handicap_name, cidr_notation in template_and_subnets
+        if cidr_notation
+    }
+
+
 # fmt: off
 def flash_errors(form, category="warning"):
     """Flash all errors for a form."""

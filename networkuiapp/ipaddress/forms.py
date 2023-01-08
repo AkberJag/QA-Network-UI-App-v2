@@ -1,15 +1,19 @@
 """ IP Address Form """
 
 from flask_wtf import FlaskForm
+from wtforms.validators import InputRequired
 from networkuiapp.ipaddress.models import IPAddress
-from wtforms.validators import InputRequired, ValidationError
+from networkuiapp.networktemplate.models import NetworkTemplate
 from wtforms import IntegerField, StringField, SubmitField, SelectField
-from networkuiapp.utils import validate_ip_address_string
+from networkuiapp.utils import validate_ip_address_string, check_ip_belongs_subnet
 
 
 # fmt: off
 class AddForm(FlaskForm):
     """add IP Address form"""
+
+    # This is a hidden field to get the id when we are updating
+    update_id = IntegerField()
 
     pc_name = StringField("Enter PC name", validators=[InputRequired()])
 
@@ -25,10 +29,18 @@ class AddForm(FlaskForm):
         if not initial_validation:
             return False
 
+        ip_address_to_update = IPAddress.query.get(self.update_id.data) if IPAddress.query.get(self.update_id.data) else None
+        print(ip_address_to_update)
+
         # Check if the PC name is alreay there on the DB or not
-        if IPAddress.query.filter_by(pc_name=self.pc_name.data).first() != None:
+        if ip_address_to_update:
+            if IPAddress.query.filter_by(pc_name=self.pc_name.data).first() != None and ip_address_to_update.pc_name != self.pc_name.data:
+                self.pc_name.errors.append(f"The name <b>'{self.pc_name.data}'</b> is already been taken, Choose something else.")
+                return False
+        elif IPAddress.query.filter_by(pc_name=self.pc_name.data).first() != None:
             self.pc_name.errors.append(f"The name <b>'{self.pc_name.data}'</b> is already been taken, Choose something else.")
             return False
+
 
         # Check the enterd IP address is a valid one or not
         if not validate_ip_address_string(self.ip_address.data):
@@ -36,9 +48,21 @@ class AddForm(FlaskForm):
             return False
         
         # Check if the IP address added to any templates
-        if IPAddress.query.filter_by(ip_address=self.ip_address.data).first() != None:
-             self.ip_address.errors.append(f"This IP address <b>{self.ip_address.data}</b> is already in use.")
-             return False
+        if ip_address_to_update:
+            if IPAddress.query.filter_by(ip_address=self.ip_address.data).first() != None and ip_address_to_update.ip_address != self.ip_address.data:
+                self.ip_address.errors.append(f"This IP address <b>{self.ip_address.data}</b> is already in use.")
+                return False
+        elif IPAddress.query.filter_by(ip_address=self.ip_address.data).first() != None:
+            self.ip_address.errors.append(f"This IP address <b>{self.ip_address.data}</b> is already in use.")
+            return False
+
+
+
+        selected_network_profile = NetworkTemplate.query.get(self.network_template.data)
+        # check if the IP address is belong to the subnet
+        if not check_ip_belongs_subnet(self.ip_address.data, selected_network_profile.cidr_notation) and selected_network_profile.cidr_notation is not None:
+            self.ip_address.errors.append(f"This IP address <b>{self.ip_address.data}</b> is not in the range of subnet <b><em>{selected_network_profile.cidr_notation}</em></b>.")
+            return False
         
         # Form validation is successful
         return True

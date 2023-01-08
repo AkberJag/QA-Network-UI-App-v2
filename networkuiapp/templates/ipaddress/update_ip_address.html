@@ -1,19 +1,23 @@
 {% extends "layout.html" %}
 
-{% set active_page = "add_ip_address" %}
-{% set title = "Add new IP address" %}
-{% set header = "Add new IP address" %}
+{% set title = "Update " + ip_address_to_update.pc_name %}
 
+{% set header %}
+Update <b>{{ip_address_to_update.pc_name}}</b>
+{% endset %}
 
 {% block content %}
 <div>
     <form method="POST" novalidate class="needs-validation">
         {{form.hidden_tag()}}
 
+        {# a hidden field to send the selected ID to the form to validate while updating the entries #}
+        <input value="{{request.view_args['id']}}" type="hidden" name="update_id">
+
         {# PC Name field #}
         <div class="mb-3">
             <label for="pc_name" class="form-label">{{form.pc_name.label}}</label>
-            {{form.pc_name(class="form-control", required="required", id="pc_name", placeholder="QA PC 1")}}
+            {{form.pc_name(class="form-control", required="required", id="pc_name", placeholder="QA PC 1", value=ip_address_to_update.pc_name)}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Please enter a name for your device.</div>
         </div>
@@ -21,7 +25,7 @@
         {# IP address field #}
         <div class="mb-3">
             <label for="ip_address" class="form-label" id="ip_address_label">{{form.ip_address.label}}</label>
-            {{form.ip_address(class="form-control", required="required", id="ip_address", placeholder="192.168.10.10")}}
+            {{form.ip_address(class="form-control", required="required", id="ip_address", placeholder="192.168.10.10", value=ip_address_to_update.ip_address)}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Stop QA'ing and enter an IP adderss.</div>
         </div>
@@ -34,8 +38,11 @@
 
         {# submit button #}
         <div class="col-12">
-            {{form.submit(class="btn btn-outline-primary")}}
+            {{form.submit(class="btn btn-outline-primary", value='Update')}}
+            {# cancel button #}
+            <a class="btn btn-outline-secondary" href="{{ url_for('ipaddress.add')}}">Cancel</a>
         </div>
+
     </form>
 </div>
 
@@ -49,7 +56,7 @@
             document.getElementById("ip_address_label").innerHTML = `Enter IP Address in this range <b>${val[text]}</b> (because a subnetmask is enabled for the selected profile)`
         }
         else {
-            document.getElementById("ip_address_label").innerHTML = "Enter IP Address"
+            document.getElementById("ip_address_label").innerHTML = "Enter IP Address:"
         }
     }
     e.onchange = onChange;

@@ -1,9 +1,15 @@
 """Main application package containing the app factory function."""
 
 from flask import Flask
+
+from networkuiapp import public
+from networkuiapp import ipaddress
+from networkuiapp import networktemplate
+
+from networkuiapp.extensions import db
+from networkuiapp.extensions import migrate
+
 from networkuiapp.config import DevelopmentConfig
-from networkuiapp.extensions import db, migrate
-from networkuiapp import ipaddress, networktemplate
 
 
 def create_app(config_object=DevelopmentConfig):
@@ -28,5 +34,6 @@ def register_extensions(app):
 
 def register_blueprints(app):
     """Register Flask blueprints."""
+    app.register_blueprint(public.views.blueprint)
     app.register_blueprint(ipaddress.views.blueprint)
     app.register_blueprint(networktemplate.views.blueprint)

@@ -8,7 +8,7 @@ class NetworkTemplate(PkModel):
 
     __tablename__ = "networktemplates"
 
-    template_name = Column(db.Text, unique=True)  # Eg: good network
+    network_template_name = Column(db.Text, unique=True)  # Eg: good network
 
     cidr_notation = Column(db.Text)  # Eg: 192.168.1.1/23
 

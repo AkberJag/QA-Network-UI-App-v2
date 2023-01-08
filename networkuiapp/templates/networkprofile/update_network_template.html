@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
 
-{% set active_page = "add_network_template" %}
-{% set title = "Add new network template" %}
-{% set header = "Add new network template" %}
+{% set title = "Update " + network_template_to_update.network_template_name %}
 
+{% set header %}
+Update <b>{{network_template_to_update.network_template_name}}</b>
+{% endset %}
 
 {% block content %}
 
@@ -11,10 +12,13 @@
     <form method="POST" novalidate class="needs-validation row g-3">
         {{form.hidden_tag()}}
 
+        {# a hidden field to send the selected ID to the form to validate while updating the entries #}
+        <input value="{{request.view_args['id']}}" type="hidden" name="update_id">
+
         {# Network Template Name field #}
         <div class="mb-2">
             <label for="network_template_name" class="form-label">{{form.network_template_name.label}}</label>
-            {{form.network_template_name(class="form-control", required="required", id="network_template_name", placeholder="Good Network")}}
+            {{form.network_template_name(value=network_template_to_update.network_template_name,class="form-control", required="required", id="network_template_name", placeholder="Good Network")}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Please enter a name for Network Template.</div>
         </div>
@@ -22,7 +26,7 @@
         {# Bandwidth Restriction Upload field #}
         <div class="mb-2">
             <label for="bandwidth_restriction_upload" class="form-label">{{form.bandwidth_restriction_upload.label}}</label>
-            {{form.bandwidth_restriction_upload(class="form-control", type="number", min=0, step="0.01", id="bandwidth_restriction_upload")}}
+            {{form.bandwidth_restriction_upload(value=network_template_to_update.bandwidth_restriction_upload,class="form-control", type="number", min=0, step="0.01", id="bandwidth_restriction_upload")}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Stop QA'ing and enter a NUMBER.</div>
         </div>
@@ -30,7 +34,7 @@
         {# Bandwidth Restriction Download field #}
         <div class="mb-2">
             <label for="bandwidth_restriction_download" class="form-label">{{form.bandwidth_restriction_download.label}}</label>
-            {{form.bandwidth_restriction_download(class="form-control", type="number", min=0, step="0.01", id="bandwidth_restriction_download")}}
+            {{form.bandwidth_restriction_download(value=network_template_to_update.bandwidth_restriction_download,class="form-control", type="number", min=0, step="0.01", id="bandwidth_restriction_download")}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Stop QA'ing and enter a NUMBER.</div>
         </div>
@@ -38,7 +42,7 @@
         {# DNS Latency field #}
         <div class="mb-2">
             <label for="dns_latency" class="form-label">{{form.dns_latency.label}}</label>
-            {{form.dns_latency(class="form-control", type="number", min=0, step="0.1", id="dns_latency")}}
+            {{form.dns_latency(value=network_template_to_update.dns_latency,class="form-control", type="number", min=0, step="0.1", id="dns_latency")}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Stop QA'ing and enter a NUMBER.</div>
         </div>
@@ -46,7 +50,7 @@
         {# General Latency field #}
         <div class="mb-2">
             <label for="general_latency" class="form-label">{{form.general_latency.label}}</label>
-            {{form.general_latency(class="form-control", type="number", min=0, step="0.1", id="general_latency")}}
+            {{form.general_latency(value=network_template_to_update.general_latency,class="form-control", type="number", min=0, step="0.1", id="general_latency")}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Stop QA'ing and enter a NUMBER.</div>
         </div>
@@ -54,17 +58,17 @@
         {# Packet Loss field #}
         <div class="mb-2">
             <label for="packet_loss" class="form-label">{{form.packet_loss.label}}</label>
-            {{form.packet_loss(class="form-control", type="number", min=0, step="0.1", id="packet_loss", value=0, placeholder="default value 0")}}
+            {{form.packet_loss(value=network_template_to_update.packet_loss,class="form-control", type="number", min=0, step="0.1", id="packet_loss", value=0, placeholder="default value 0")}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Stop QA'ing and enter a NUMBER.</div>
         </div>
-
+        {{network_template_to_update.cidr_ip}}
 
         {# Subnet #}
         {# Subnet IP #}
         <div class="col-md-6">
             <label for="cidr_ip" class="form-label">{{form.cidr_ip.label}}</label>
-            {{form.cidr_ip(class="form-control", id="cidr_ip", placeholder="192.168.1.1 (optional)")}}
+            {{form.cidr_ip(value=network_template_to_update.cidr_notation.split('/')[0] if network_template_to_update.cidr_notation,class="form-control", id="cidr_ip", placeholder="192.168.1.1 (optional)")}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Stop QA'ing and enter a valid IP address.</div>
         </div>
@@ -72,14 +76,15 @@
         {# Subnet Suffix #}
         <div class="col-md-2">
             <label for="cidr_suffix" class="form-label">{{form.cidr_suffix.label}}</label>
-            {{form.cidr_suffix(class="form-control", type="number", min=0, max=32, placeholder="30 (optional)")}}
+            {{form.cidr_suffix(value=network_template_to_update.cidr_notation.split('/')[1] if network_template_to_update.cidr_notation,class="form-control", type="number", min=0, max=32, placeholder="30 (optional)")}}
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Enter a valid number between 0 - 32</div>
         </div>
 
         {# submit button #}
         <div class="md-5">
-            {{form.submit(class="btn btn-outline-primary")}}
+            {{form.submit(class="btn btn-outline-primary", value="Update")}}
+            <a class="btn btn-outline-secondary" href="{{ url_for('networktemplates.list')}}">Cancel</a>
         </div>
     </form>
 </div>

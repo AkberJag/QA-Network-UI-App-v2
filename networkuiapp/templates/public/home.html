@@ -1,0 +1,103 @@
+<script>
+    const getRandomEmoji = () => {
+        const emojis = ['🐵', '🐒', '🦍', '🦧', '🐔', '🐓', '🐣', '🐤', '🐌', '🦋', '🐛', '🐜', '🐝', '🍇', '🍆', '🐞', '🦗', '🕷']
+        return emojis[~~(Math.random() * emojis.length)]
+    }
+</script>
+
+{% extends "layout.html" %}
+
+{% set active_page = "home" %}
+{% set header = "List of configured PCs" if templates[1] else "No PCs configured yet" %}
+
+{% block content %}
+
+<div>
+
+    {% if templates[1] %}
+    {% for _, template_items in templates.items() %}
+    <div class="card mb-4">
+        {# template name #}
+        <div class="card-header">
+            <h4 style="display: inline-block" data-bs-container="body" data-bs-trigger="hover" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" data-bs-content="
+                    <b>Bandwidth</b> Up: {{template_items['template'].bandwidth_restriction_upload}} / Down: {{template_items['template'].bandwidth_restriction_download}}<br>
+                    <b>DNS Latency:</b> {{template_items['template'].dns_latency}}<br>
+                    <b>General Latency: </b> {{template_items['template'].general_latency}}<br>
+                    <b>Packet Loss: </b>{{template_items['template'].packet_loss}}%<br>
+                    {% if template_items['template'].cidr_notation %}<b>SubNet Mask: </b> {{template_items['template'].cidr_notation }} {% endif %}
+                    ">
+                {{template_items['template'].network_template_name}} <sup id="emoji-{{loop.index}}" style="vertical-align: super; font-size: small"></sup></h2>
+                <script> document.getElementById("emoji-{{loop.index}}").innerHTML = getRandomEmoji()</script>
+            </h4>
+        </div>
+        {% if template_items.pc != [] %}
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">PC Name</th>
+                            <th scope="col">IP Address</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    {% for ipaddress, _ in template_items['pc'] %}
+                    <tr>
+                        {# {{loop.index}} is something like enumerate in python #}
+                        <th scope="row">{{loop.index}}</th>
+                        <td>{{ipaddress.pc_name}}</td>
+                        <td>{{ipaddress.ip_address}}</td>
+                        <td><button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteIPConfirm">Delete</button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="deleteIPConfirm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete
+                                                <b>{{ipaddress.pc_name}}?</b>
+                                            </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            These are the configured values:
+                                            <p>
+                                                <br>
+                                                <b>Bandwidth</b> Up:
+                                                {{template_items['template'].bandwidth_restriction_upload}} / Down:
+                                                {{template_items['template'].bandwidth_restriction_download}}<br>
+                                                <b>DNS Latency:</b> {{template_items['template'].dns_latency}}<br>
+                                                <b>General Latency: </b>
+                                                {{template_items['template'].general_latency}}<br>
+                                                <b>Packet Loss: </b>{{template_items['template'].packet_loss}}%<br><br>
+                                                <b>Ip Address:</b> {{ipaddress.ip_address}}
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <a href="{{ url_for('ipaddress.delete', id=ipaddress.id) }}" type="button" class="btn btn-danger">Delete, I fear no
+                                                man</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a class="btn btn-outline-warning" href="{{ url_for('ipaddress.update', id=ipaddress.id) }}">Edit</a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="card-body"> No IP address configured for this Network Template yet</div>
+
+        {% endif %}
+
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+{% endblock content %}

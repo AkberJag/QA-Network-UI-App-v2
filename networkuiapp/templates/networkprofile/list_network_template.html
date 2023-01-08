@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% set active_page = "list_network" %}
+{% set title = "All network templates" %}
+{% set header = "List of network templates" if network_templates else "No Network templates added yet" %}
+
+{% block content %}
+
+<div>
+    {% if network_templates %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Template Name <div style="font-weight: normal; font-size: small;">SubNet mask</div>
+                    </th>
+                    <th scope="col">Bandwidth restriction (max upload, max download)</th>
+                    <th scope="col">DNS Latency</th>
+                    <th scope="col">General Latency</th>
+                    <th scope="col">Packet Loss %</th>
+                    <th scope="col">Number of PCs</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            {% for network_template in network_templates %}
+            <tbody>
+                <th scope="row">{{loop.index}}</th>
+                <td><b>{{network_template.network_template_name}}</b><br>
+                    {% if network_template.cidr_notation %}
+                    <div style="font-size: small;">{{network_template.cidr_notation}}</div>
+                    {% endif %}
+                </td>
+                <td>{{network_template.bandwidth_restriction_upload ~ ' MB, ' if network_template.bandwidth_restriction_upload
+                    is not none else '--,'}} {{network_template.bandwidth_restriction_download ~ ' MB, ' if
+                    network_template.bandwidth_restriction_download is not none else '--'}}
+                </td>
+                <td>{{network_template.dns_latency if network_template.dns_latency is not none else '--'}}</td>
+                <td>{{network_template.general_latency if network_template.general_latency is not none else '--'}}</td>
+                <td>{{network_template.packet_loss if network_template.packet_loss is not none else '--'}}</td>
+                <td>{{network_template.no_of_pcs}}</td>
+                <td>
+                    <div style="width: max-content;">
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteTemplateConfirm{{network_template.id}}">
+                            Delete
+                        </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="deleteTemplateConfirm{{network_template.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete
+                                            <b>{{network_template.network_template_name}}?</b>
+                                        </h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you wanted to delete "{{network_template.network_template_name}}?"
+                                        {% if network_template.no_of_pcs | int > 1 %} <u>This is going to affect
+                                            {{network_template.no_of_pcs}} devices</u>
+                                        {% elif network_template.no_of_pcs | int == 1 %}
+                                        <u>This is going to affect {{network_template.no_of_pcs}} device</u>
+                                        {% else %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <a href="{{ url_for('networktemplates.delete', id=network_template.id) }}" type="button" class="btn btn-danger">Delete, I fear no
+                                            man</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="btn btn-outline-warning" href="{{ url_for('networktemplates.update', id=network_template.id) }}">Edit</a>
+                    </div>
+                </td>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
