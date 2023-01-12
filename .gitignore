@@ -303,3 +303,4 @@ poetry.toml
 # changing the migrations again and again so ignoring the folder for now.. 😅😅
 migrations/*
 .vscode/settings.json
+example.json
