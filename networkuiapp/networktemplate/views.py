@@ -8,8 +8,10 @@ from markupsafe import Markup
 from networkuiapp import config
 from flask import render_template
 from networkuiapp.utils import flash_errors
+from networkuiapp.ipaddress.models import IPAddress
 from networkuiapp.networktemplate.forms import AddForm
 from networkuiapp.networktemplate.models import NetworkTemplate
+from networkuiapp.firewall_helpers.firewall_utils import make_json_endpoint
 
 blueprint = Blueprint("networktemplates", __name__, url_prefix="/networktemplates")
 
@@ -23,6 +25,10 @@ def add():
     if config.is_a_script_running:
         flash("a script is running please wait before adding a new template", "danger")
         return redirect(url_for("public.index"))
+
+    # check if a SSH script is configuring the firewall if not make a config
+    if not config.is_a_script_running:
+        make_json_endpoint(IPAddress, NetworkTemplate)
 
     if form.validate_on_submit():
         cidr_notation = (
@@ -64,6 +70,10 @@ def delete(id):
     if config.is_a_script_running:
         flash("a script is running please wait before deleting a template", "danger")
         return redirect(url_for("public.index"))
+
+    # check if a SSH script is configuring the firewall if not make a config
+    if not config.is_a_script_running:
+        make_json_endpoint(IPAddress, NetworkTemplate)
 
     network_template_to_delete = NetworkTemplate.query.get(id)
     if network_template_to_delete:

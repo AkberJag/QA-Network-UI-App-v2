@@ -25,7 +25,7 @@ def make_json_endpoint(IPAddress, NetworkTemplate):
     json_end = {}
 
     config.is_a_script_running = True
-    sleep(10)
+    # sleep(10)
 
     for nt in NetworkTemplate.query.all():
         pcs_in_template = [

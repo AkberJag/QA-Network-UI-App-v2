@@ -25,14 +25,14 @@ blueprint = Blueprint("ipaddress", __name__, url_prefix="/ipaddress")
 def add():
     """Add new ip address"""
 
+    # check if a SSH script is configuring the firewall
+    if config.is_a_script_running:
+        flash("a script is running please wait before deleting a template", "danger")
+        return redirect(url_for("public.index"))
+
     # check if a SSH script is configuring the firewall if not make a config
     if not config.is_a_script_running:
         make_json_endpoint(IPAddress, NetworkTemplate)
-
-    # check if a SSH script is configuring the firewall
-    if config.is_a_script_running:
-        flash("a script is running please wait before adding a new PC", "danger")
-        return redirect(url_for("public.index"))
 
     form = AddForm()
 
@@ -91,8 +91,12 @@ def update(id):
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
-        flash("a script is running please wait before updating a PC", "danger")
+        flash("a script is running please wait before deleting a template", "danger")
         return redirect(url_for("public.index"))
+
+    # check if a SSH script is configuring the firewall if not make a config
+    if not config.is_a_script_running:
+        make_json_endpoint(IPAddress, NetworkTemplate)
 
     # make the network profile dropdown
     form.network_template.choices = make_dropdown(
