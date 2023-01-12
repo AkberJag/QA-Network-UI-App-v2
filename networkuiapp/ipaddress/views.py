@@ -106,8 +106,7 @@ def update(id):
             network_template=form.network_template.data,
         )
         flash(Markup(f"IP address updated successfully"), "success")
-        # todo: redirect to home
-        return redirect(url_for("networktemplates.list"))
+        return redirect(url_for("public.index"))
     else:
         flash_errors(form)
 
