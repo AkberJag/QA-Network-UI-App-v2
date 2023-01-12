@@ -1,6 +1,5 @@
-import os
-import subprocess
-from networkuiapp.database import db
+import os, json
+from pprint import pprint
 
 
 DIR_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -18,85 +17,30 @@ def add_ip_to_firewall(ip, network_template):
     print("firewall call")
 
 
-class Template:
-    bandwidth_restriction_upload: int
-    bandwidth_restriction_download: int
-    dns_latency: int
-    general_latency: int
-    packet_loss: int
-
-    def __init__(
-        self,
-        bandwidth_restriction_upload: int,
-        bandwidth_restriction_download: int,
-        dns_latency: int,
-        general_latency: int,
-        packet_loss: int,
-    ) -> None:
-        self.bandwidth_restriction_upload = bandwidth_restriction_upload
-        self.bandwidth_restriction_download = bandwidth_restriction_download
-        self.dns_latency = dns_latency
-        self.general_latency = general_latency
-        self.packet_loss = packet_loss
-
-
-class Welcome10Value:
-    pcs: list[str]
-    template: Template
-    name: str
-
-    def __init__(self, pcs: list[str], template: Template, name: str) -> None:
-        self.pcs = pcs
-        self.template = template
-        self.name = name
-
-
 def make_json_endpoint(IPAddress, NetworkTemplate):
-    network_templates = NetworkTemplate.query.all()
+    """Generates a json file with network template parametes and the pcs in it"""
+    json_end = {}
+    for nt in NetworkTemplate.query.all():
+        pcs_in_template = [
+            ip.ip_address
+            for ip in IPAddress.query.filter(IPAddress.network_template == nt.id).all()
+        ]
+        if pcs_in_template:
+            json_end[nt.__dict__.get("id")] = {
+                "name": nt.__dict__.get("network_template_name"),
+                "template": {
+                    "bandwidth_restriction_upload": nt.__dict__.get(
+                        "bandwidth_restriction_upload"
+                    ),
+                    "bandwidth_restriction_download": nt.__dict__.get(
+                        "bandwidth_restriction_download"
+                    ),
+                    "dns_latency": nt.__dict__.get("dns_latency"),
+                    "general_latency": nt.__dict__.get("general_latency"),
+                    "packet_loss": nt.__dict__.get("packet_loss"),
+                },
+                "pcs": pcs_in_template,
+            }
 
-    for network_template in network_templates:
-        print(
-            [
-                ip.ip_address
-                for ip in IPAddress.query.filter(
-                    IPAddress.network_template == network_template.id
-                ).all()
-            ]
-        )
-
-        print(network_template.__dict__.get("id"))
-
-
-# example JSON
-# {
-#   "1": {
-#     "pcs": [
-#       "192.168.1.1",
-#       "192.168.1.2",
-#       "192.168.1.3"
-#     ],
-#     "template": {
-#       "bandwidth_restriction_upload": "10",
-#       "bandwidth_restriction_download": "15",
-#       "dns_latency": "35",
-#       "general_latency": "54",
-#       "packet_loss": "100"
-#     },
-#     "name": "good network"
-#   },
-#   "2": {
-#     "pcs": [
-#       "192.168.1.1",
-#       "192.168.1.2",
-#       "192.168.1.3"
-#     ],
-#     "template": {
-#       "bandwidth_restriction_upload": "10",
-#       "bandwidth_restriction_download": "15",
-#       "dns_latency": "35",
-#       "general_latency": "54",
-#       "packet_loss": "100"
-#     },
-#     "name": "Bad network"
-#   }
-# }
+    with open("example.json", "w") as jsonfile:
+        jsonfile.write(json.dumps(json_end))
