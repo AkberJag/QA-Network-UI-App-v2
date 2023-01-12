@@ -25,7 +25,9 @@ blueprint = Blueprint("ipaddress", __name__, url_prefix="/ipaddress")
 def add():
     """Add new ip address"""
 
-    make_json_endpoint(IPAddress, NetworkTemplate)
+    # check if a SSH script is configuring the firewall if not make a config
+    if not config.is_a_script_running:
+        make_json_endpoint(IPAddress, NetworkTemplate)
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
