@@ -19,6 +19,11 @@ def add():
     """Add a network template"""
     form = AddForm()
 
+    # check if a SSH script is configuring the firewall
+    if config.is_a_script_running:
+        flash("a script is running please wait before adding a new template", "danger")
+        return redirect(url_for("public.index"))
+
     if form.validate_on_submit():
         cidr_notation = (
             f"{form.cidr_ip.data}/{int(form.cidr_suffix.data)}"
@@ -54,6 +59,12 @@ def list():
 @blueprint.route("/delete/<int:id>", methods=["GET"])
 def delete(id):
     """Delete a network template"""
+
+    # check if a SSH script is configuring the firewall
+    if config.is_a_script_running:
+        flash("a script is running please wait before deleting a template", "danger")
+        return redirect(url_for("public.index"))
+
     network_template_to_delete = NetworkTemplate.query.get(id)
     if network_template_to_delete:
         NetworkTemplate.delete(network_template_to_delete)
@@ -65,6 +76,11 @@ def delete(id):
 def update(id):
     """update a network template"""
     form = AddForm()
+
+    # check if a SSH script is configuring the firewall
+    if config.is_a_script_running:
+        flash("a script is running please wait before updating a template", "danger")
+        return redirect(url_for("public.index"))
 
     network_template_to_update = NetworkTemplate.query.get_or_404(id)
 

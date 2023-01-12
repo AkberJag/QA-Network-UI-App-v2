@@ -3,7 +3,6 @@ from flask import render_template
 from networkuiapp.database import db
 from networkuiapp.ipaddress.models import IPAddress
 from networkuiapp.networktemplate.models import NetworkTemplate
-from networkuiapp.firewall_helpers.firewall_utils import make_json_endpoint
 
 blueprint = Blueprint("public", __name__, url_prefix="/")
 
@@ -24,7 +23,4 @@ def index():
             ),
             "template": template,
         }
-
-    make_json_endpoint(IPAddress, NetworkTemplate)
-
     return render_template("public/home.html", templates=templates)

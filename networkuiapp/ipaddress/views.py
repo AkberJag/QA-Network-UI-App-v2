@@ -16,7 +16,7 @@ from networkuiapp.utils import make_cidr_range
 from networkuiapp.ipaddress.forms import AddForm
 from networkuiapp.ipaddress.models import IPAddress
 from networkuiapp.networktemplate.models import NetworkTemplate
-from networkuiapp.firewall_helpers.firewall_utils import add_ip_to_firewall
+from networkuiapp.firewall_helpers.firewall_utils import make_json_endpoint
 
 blueprint = Blueprint("ipaddress", __name__, url_prefix="/ipaddress")
 
@@ -24,6 +24,14 @@ blueprint = Blueprint("ipaddress", __name__, url_prefix="/ipaddress")
 @blueprint.route("/add", methods=["GET", "POST"])
 def add():
     """Add new ip address"""
+
+    make_json_endpoint(IPAddress, NetworkTemplate)
+
+    # check if a SSH script is configuring the firewall
+    if config.is_a_script_running:
+        flash("a script is running please wait before adding a new PC", "danger")
+        return redirect(url_for("public.index"))
+
     form = AddForm()
 
     # make the network profile dropdown
@@ -36,13 +44,7 @@ def add():
         flash("Add a Network Template first to add an ip address", "warning")
         return redirect(url_for("networktemplates.add"))
 
-    # check if a SSH script is configuring the firewall
-    if config.is_a_script_running:
-        flash("a script is running please wait before adding a new PC", "danger")
-        return redirect(url_for("networktemplates.list"))
-
     if form.validate_on_submit():
-        add_ip_to_firewall(form.ip_address.data, form.network_template.data)
         IPAddress.create(
             ip_address=form.ip_address.data,
             pc_name=form.pc_name.data,
@@ -66,6 +68,12 @@ def add():
 @blueprint.route("/delete/<int:id>", methods=["GET", "POST"])
 def delete(id):
     """Delete an ip address entry"""
+
+    # check if a SSH script is configuring the firewall
+    if config.is_a_script_running:
+        flash("a script is running please wait before deleting a PC", "danger")
+        return redirect(url_for("public.index"))
+
     ip_address_to_delete = IPAddress.query.get(id)
     if ip_address_to_delete:
         IPAddress.delete(ip_address_to_delete)
@@ -78,6 +86,11 @@ def delete(id):
 def update(id):
     """Update an ip address"""
     form = AddForm()
+
+    # check if a SSH script is configuring the firewall
+    if config.is_a_script_running:
+        flash("a script is running please wait before updating a PC", "danger")
+        return redirect(url_for("public.index"))
 
     # make the network profile dropdown
     form.network_template.choices = make_dropdown(

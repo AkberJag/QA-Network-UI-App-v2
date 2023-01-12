@@ -1,6 +1,7 @@
-import os, json
-from pprint import pprint
-
+import os
+import json
+from networkuiapp import config
+from time import sleep
 
 DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -18,8 +19,14 @@ def add_ip_to_firewall(ip, network_template):
 
 
 def make_json_endpoint(IPAddress, NetworkTemplate):
-    """Generates a json file with network template parametes and the pcs in it"""
+    """Generates a json file with network template parametes and the pcs in it
+    # ? I Think this methord needs to be an async fn
+    """
     json_end = {}
+
+    config.is_a_script_running = True
+    sleep(10)
+
     for nt in NetworkTemplate.query.all():
         pcs_in_template = [
             ip.ip_address
@@ -44,3 +51,5 @@ def make_json_endpoint(IPAddress, NetworkTemplate):
 
     with open("example.json", "w") as jsonfile:
         jsonfile.write(json.dumps(json_end))
+
+    config.is_a_script_running = False
