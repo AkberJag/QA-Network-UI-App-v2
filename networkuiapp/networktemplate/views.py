@@ -35,7 +35,8 @@ def add():
             packet_loss=form.packet_loss.data,
         )
         flash(Markup(f"Network template added successfully"), "success")
-        # todo: redirect to home
+        return redirect(url_for("networktemplates.list"))
+
     else:
         flash_errors(form)
     return render_template("networkprofile/add_network_template.html", form=form)
