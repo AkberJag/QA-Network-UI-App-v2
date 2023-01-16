@@ -80,7 +80,7 @@ def delete(id):
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
-        flash("a script is running please wait before adding a new PC", "danger")
+        flash("a script is running please wait before deleting a new PC", "danger")
         return redirect(url_for("networktemplates.list"))
 
     # check if a SSH script is configuring the firewall if not make a config
@@ -108,7 +108,7 @@ def update(id):
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
-        flash("a script is running please wait before adding a new PC", "danger")
+        flash("a script is running please wait before updating a new PC", "danger")
         return redirect(url_for("networktemplates.list"))
 
     # check if a SSH script is configuring the firewall if not make a config
