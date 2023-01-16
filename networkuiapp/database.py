@@ -123,3 +123,37 @@ def ReferenceCol(tablename, nullable=False, pk_name="id", **kwargs):
     return db.Column(
         db.ForeignKey("{0}.{1}".format(tablename, pk_name)), nullable=nullable, **kwargs
     )
+
+
+def update_pc_count(
+    IPAddress, NetworkTemplate, NetworkTemplate_ID, old_template_id=None
+) -> None:
+    """Update the 'no_of_pcs' column on a network tempate table
+
+    Args:
+        IPAddress: The IPAddress model added or updated
+        NetworkTemplate: The NetworkTemplate model selected while adding/updating a new pc
+        NetworkTemplate_ID: Network template's PK
+        old_template_id: to decrement one from the current template if update operation is performing
+    """
+
+    NetworkTemplate.query.get_or_404(NetworkTemplate_ID).update(
+        no_of_pcs=len(
+            db.session.query(IPAddress, NetworkTemplate)
+            .select_from(IPAddress)
+            .join(NetworkTemplate)
+            .filter(IPAddress.network_template == NetworkTemplate_ID)
+            .all()
+        )
+    )
+
+    if old_template_id:
+        NetworkTemplate.query.get_or_404(old_template_id).update(
+            no_of_pcs=len(
+                db.session.query(IPAddress, NetworkTemplate)
+                .select_from(IPAddress)
+                .join(NetworkTemplate)
+                .filter(IPAddress.network_template == old_template_id)
+                .all()
+            )
+        )

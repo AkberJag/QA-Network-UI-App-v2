@@ -9,6 +9,8 @@ from flask import render_template
 from markupsafe import Markup
 from networkuiapp import config
 
+from networkuiapp.database import update_pc_count
+
 from networkuiapp.utils import flash_errors
 from networkuiapp.utils import make_dropdown
 from networkuiapp.utils import make_cidr_range
@@ -47,11 +49,16 @@ def add():
         return redirect(url_for("networktemplates.add"))
 
     if form.validate_on_submit():
+
         IPAddress.create(
             ip_address=form.ip_address.data,
             pc_name=form.pc_name.data,
             network_template=form.network_template.data,
         )
+
+        # update the 'no_of_pcs' columns in the Network Templates Table
+        update_pc_count(IPAddress, NetworkTemplate, form.network_template.data)
+
         flash(Markup(f"IP address added successfully"), "success")
         return redirect(url_for("public.index"))
     else:
@@ -79,9 +86,15 @@ def delete(id):
     ip_address_to_delete = IPAddress.query.get(id)
     if ip_address_to_delete:
         IPAddress.delete(ip_address_to_delete)
+
+        # update the 'no_of_pcs' columns in the Network Templates Table
+        update_pc_count(
+            IPAddress, NetworkTemplate, ip_address_to_delete.network_template
+        )
+
         flash(f"IP Address deleted", "success")
         # TODO: Add a script call to remove this IP address from the restriction
-    return redirect(url_for("networktemplates.list"))
+    return redirect(url_for("public.index"))
 
 
 @blueprint.route("/update/<int:id>", methods=["GET", "POST"])
@@ -91,11 +104,11 @@ def update(id):
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
-        flash("a script is running please wait before deleting a template", "danger")
-        return redirect(url_for("public.index"))
+        flash("a script is running please wait before adding a new PC", "danger")
+        return redirect(url_for("networktemplates.list"))
 
     # check if a SSH script is configuring the firewall if not make a config
-    if not config.is_a_script_running:
+    else:
         make_json_endpoint(IPAddress, NetworkTemplate)
 
     # make the network profile dropdown
@@ -113,17 +126,23 @@ def update(id):
 
     ip_address_to_update = IPAddress.query.get_or_404(id)
 
-    # check if a SSH script is configuring the firewall
-    if config.is_a_script_running:
-        flash("a script is running please wait before adding a new PC", "danger")
-        return redirect(url_for("networktemplates.list"))
-
     if form.validate_on_submit():
+        old_template_id = ip_address_to_update.network_template
+
         ip_address_to_update.update(
             pc_name=form.pc_name.data,
             ip_address=form.ip_address.data,
             network_template=form.network_template.data,
         )
+
+        # update the 'no_of_pcs' columns in the Network Templates Table
+        update_pc_count(
+            IPAddress,
+            NetworkTemplate,
+            form.network_template.data,
+            old_template_id=old_template_id,
+        )
+
         flash(Markup(f"IP address updated successfully"), "success")
         return redirect(url_for("public.index"))
     else:
