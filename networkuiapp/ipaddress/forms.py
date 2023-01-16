@@ -29,8 +29,7 @@ class AddForm(FlaskForm):
         if not initial_validation:
             return False
 
-        ip_address_to_update = IPAddress.query.get(self.update_id.data) if IPAddress.query.get(self.update_id.data) else None
-        print(ip_address_to_update)
+        ip_address_to_update = IPAddress.query.get(self.update_id.data) if self.update_id.data and IPAddress.query.get(self.update_id.data) else None
 
         # Check if the PC name is alreay there on the DB or not
         if ip_address_to_update:
