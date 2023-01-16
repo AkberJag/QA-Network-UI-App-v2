@@ -29,11 +29,11 @@ def add():
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
-        flash("a script is running please wait before deleting a template", "danger")
-        return redirect(url_for("public.index"))
+        flash("a script is running please wait before adding a new PC", "danger")
+        return redirect(url_for("networktemplates.list"))
 
     # check if a SSH script is configuring the firewall if not make a config
-    if not config.is_a_script_running:
+    else:
         make_json_endpoint(IPAddress, NetworkTemplate)
 
     form = AddForm()
@@ -80,8 +80,12 @@ def delete(id):
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
-        flash("a script is running please wait before deleting a PC", "danger")
-        return redirect(url_for("public.index"))
+        flash("a script is running please wait before adding a new PC", "danger")
+        return redirect(url_for("networktemplates.list"))
+
+    # check if a SSH script is configuring the firewall if not make a config
+    else:
+        make_json_endpoint(IPAddress, NetworkTemplate)
 
     ip_address_to_delete = IPAddress.query.get(id)
     if ip_address_to_delete:
