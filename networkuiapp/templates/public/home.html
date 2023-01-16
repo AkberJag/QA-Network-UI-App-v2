@@ -48,13 +48,13 @@
                         <th scope="row">{{loop.index}}</th>
                         <td>{{ipaddress.pc_name}}</td>
                         <td>{{ipaddress.ip_address}}</td>
-                        <td><button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteIPConfirm">Delete</button>
+                        <td><button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteIPConfirm-{{ipaddress.id}}">Delete</button>
                             <!-- Modal -->
-                            <div class="modal fade" id="deleteIPConfirm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="deleteIPConfirm-{{ipaddress.id}}" tabindex="-1" aria-labelledby="DeleteConfirmModalLabel-{{ipaddress.id}}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete
+                                            <h1 class="modal-title fs-5" id="DeleteConfirmModalLabel-{{ipaddress.id}}">Delete
                                                 <b>{{ipaddress.pc_name}}?</b>
                                             </h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
