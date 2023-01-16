@@ -32,10 +32,6 @@ def add():
         flash("a script is running please wait before adding a new PC", "danger")
         return redirect(url_for("networktemplates.list"))
 
-    # check if a SSH script is configuring the firewall if not make a config
-    else:
-        make_json_endpoint(IPAddress, NetworkTemplate)
-
     form = AddForm()
 
     # make the network profile dropdown
@@ -58,6 +54,8 @@ def add():
 
         # update the 'no_of_pcs' columns in the Network Templates Table
         update_pc_count(IPAddress, NetworkTemplate, form.network_template.data)
+
+        make_json_endpoint(IPAddress, NetworkTemplate)
 
         flash(Markup(f"IP address added successfully"), "success")
         return redirect(url_for("public.index"))
@@ -83,10 +81,6 @@ def delete(id):
         flash("a script is running please wait before deleting a new PC", "danger")
         return redirect(url_for("networktemplates.list"))
 
-    # check if a SSH script is configuring the firewall if not make a config
-    else:
-        make_json_endpoint(IPAddress, NetworkTemplate)
-
     ip_address_to_delete = IPAddress.query.get(id)
     if ip_address_to_delete:
         IPAddress.delete(ip_address_to_delete)
@@ -96,8 +90,9 @@ def delete(id):
             IPAddress, NetworkTemplate, ip_address_to_delete.network_template
         )
 
+        make_json_endpoint(IPAddress, NetworkTemplate)
+
         flash(f"IP Address deleted", "success")
-        # TODO: Add a script call to remove this IP address from the restriction
     return redirect(url_for("public.index"))
 
 
@@ -146,6 +141,8 @@ def update(id):
             form.network_template.data,
             old_template_id=old_template_id,
         )
+
+        make_json_endpoint(IPAddress, NetworkTemplate)
 
         flash(Markup(f"IP address updated successfully"), "success")
         return redirect(url_for("public.index"))
