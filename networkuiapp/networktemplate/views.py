@@ -26,10 +26,6 @@ def add():
         flash("a script is running please wait before adding a new template", "danger")
         return redirect(url_for("public.index"))
 
-    # check if a SSH script is configuring the firewall if not make a config
-    else:
-        make_json_endpoint(IPAddress, NetworkTemplate)
-
     if form.validate_on_submit():
         cidr_notation = (
             f"{form.cidr_ip.data}/{int(form.cidr_suffix.data)}"
@@ -45,6 +41,7 @@ def add():
             general_latency=form.general_latency.data,
             packet_loss=form.packet_loss.data,
         )
+        make_json_endpoint(IPAddress, NetworkTemplate)
         flash(Markup(f"Network template added successfully"), "success")
         return redirect(url_for("networktemplates.list"))
 
@@ -73,13 +70,10 @@ def delete(id):
         )
         return redirect(url_for("public.index"))
 
-    # check if a SSH script is configuring the firewall if not make a config
-    else:
-        make_json_endpoint(IPAddress, NetworkTemplate)
-
     network_template_to_delete = NetworkTemplate.query.get(id)
     if network_template_to_delete:
         NetworkTemplate.delete(network_template_to_delete)
+        make_json_endpoint(IPAddress, NetworkTemplate)
         flash(f"Network Template deleted", "success")
     return redirect(url_for("networktemplates.list"))
 
@@ -95,10 +89,6 @@ def update(id):
             "a script is running please wait before deleting a new template", "danger"
         )
         return redirect(url_for("public.index"))
-
-    # check if a SSH script is configuring the firewall if not make a config
-    else:
-        make_json_endpoint(IPAddress, NetworkTemplate)
 
     network_template_to_update = NetworkTemplate.query.get_or_404(id)
 
@@ -118,6 +108,8 @@ def update(id):
             general_latency=form.general_latency.data,
             packet_loss=form.packet_loss.data,
         )
+        make_json_endpoint(IPAddress, NetworkTemplate)
+        flash("Network Temlate Updated!")
         return redirect(url_for("networktemplates.list"))
 
     else:
