@@ -27,7 +27,7 @@ def add():
         return redirect(url_for("public.index"))
 
     # check if a SSH script is configuring the firewall if not make a config
-    if not config.is_a_script_running:
+    else:
         make_json_endpoint(IPAddress, NetworkTemplate)
 
     if form.validate_on_submit():
@@ -68,11 +68,13 @@ def delete(id):
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
-        flash("a script is running please wait before deleting a template", "danger")
+        flash(
+            "a script is running please wait before deleting a new template", "danger"
+        )
         return redirect(url_for("public.index"))
 
     # check if a SSH script is configuring the firewall if not make a config
-    if not config.is_a_script_running:
+    else:
         make_json_endpoint(IPAddress, NetworkTemplate)
 
     network_template_to_delete = NetworkTemplate.query.get(id)
@@ -89,15 +91,16 @@ def update(id):
 
     # check if a SSH script is configuring the firewall
     if config.is_a_script_running:
-        flash("a script is running please wait before updating a template", "danger")
+        flash(
+            "a script is running please wait before deleting a new template", "danger"
+        )
         return redirect(url_for("public.index"))
 
-    network_template_to_update = NetworkTemplate.query.get_or_404(id)
+    # check if a SSH script is configuring the firewall if not make a config
+    else:
+        make_json_endpoint(IPAddress, NetworkTemplate)
 
-    # check if a SSH script is configuring the firewall
-    if config.is_a_script_running:
-        flash("a script is running please wait before adding a new PC", "danger")
-        return redirect(url_for("networktemplates.list"))
+    network_template_to_update = NetworkTemplate.query.get_or_404(id)
 
     if form.validate_on_submit():
         cidr_notation = (
