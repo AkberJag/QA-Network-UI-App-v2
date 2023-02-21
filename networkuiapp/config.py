@@ -14,12 +14,18 @@ class Config:
     SECRET_KEY = "adsadsads"
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+    # create the db folder to avoid the error > sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) unable to open database file
+    if not os.path.exists(os.path.join(BASE_DIR, "db")):
+        os.makedirs(os.path.join(BASE_DIR, "db"))
+
+    DB_FOLDER = os.path.join(BASE_DIR, "db")
+
 
 class DevelopmentConfig(Config):
     """Development configuration."""
 
     DB_NAME = "dev.sqlite"
-    DB_PATH = os.path.join(Config.BASE_DIR, DB_NAME)
+    DB_PATH = os.path.join(Config.DB_FOLDER, DB_NAME)
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
 
 
