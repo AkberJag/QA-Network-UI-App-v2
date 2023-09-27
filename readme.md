@@ -1,3 +1,6 @@
+_Side project that helped me get my first Junior Developer job. 💖_
+
+
 https://github.com/AkberJag/QA-Network-UI-App - old code
 
 
